@@ -38,8 +38,8 @@ export function useFetchDogBreeds() {
 
             setDogBreeds(breedOptions); 
         } catch (error) {
-            //TODO: Tratamento de erros mais eficaz. 
-            setError('Error fetching breeds');
+            //@TODO: Tratamento de erros mais eficaz. 
+            setError('Erro buscando raças.');
         } finally {
             setLoading(false);
         }
