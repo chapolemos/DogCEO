@@ -10,6 +10,8 @@ import { DogImageView } from '@/components/DogImageView';
 export default function HomeScreen() {
   const [selectedBreed, setSelectedBreed] = useState(null);
 
+  {/* Objeto de raças temporario pra testar a UI */ }
+
   const dogBreeds = [
     { label: 'Bulldog', value: 'bulldog' },
     { label: 'Poodle', value: 'poodle' },
@@ -30,10 +32,12 @@ export default function HomeScreen() {
           source={require('@/assets/images/partial-react-logo.png')}
           style={styles.reactLogo}
         />
-      }
-    >
+      }>
+
+      {/* Componente de Menu dropdown com autocomplete das raças */}
       <DogBreedDropdown options={dogBreeds} onSelect={handleSelectBreed} />
 
+      {/* Exibição da raça selecionada pra teste */}
       {selectedBreed && (
         <ThemedView style={styles.selectedBreedContainer}>
           <ThemedText type="subtitle">Raça selecionada:</ThemedText>
