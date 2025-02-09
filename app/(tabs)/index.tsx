@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -6,22 +6,34 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { DogBreedDropdown } from '@/components/DogBreedDropdown';
 import { DogImageView } from '@/components/DogImageView';
+import { useFetchDogBreeds } from '@/hooks/useFetchDogBreeds';
+import { getBreedImage, getSubBreedImage } from '@/services/axiosClient';
 
 export default function HomeScreen() {
+  const { dogBreeds, loading: dogBreedsloading, error, fetchBreeds } = useFetchDogBreeds();
   const [selectedBreed, setSelectedBreed] = useState(null);
+  const [dogImage, setDogImage] = useState(null);
 
-  {/* Objeto de raças temporario pra testar a UI */ }
+  // UseEffect com array de dependencias vazio pra executar o fetch de raças apenas uma vez quando o componente é montado.
+  useEffect(() => {
+    fetchBreeds();
+  }, []);
 
-  const dogBreeds = [
-    { label: 'Bulldog', value: 'bulldog' },
-    { label: 'Poodle', value: 'poodle' },
-    { label: 'Labrador', value: 'labrador' },
-    { label: 'Beagle', value: 'beagle' },
-    { label: 'German Shepherd', value: 'german_shepherd' },
-  ];
-
-  const handleSelectBreed = (breed) => {
+  //Handler pra seleção de raças e fetch de imagens a partir do Axios
+  const handleSelectBreed = async (breed) => {
     setSelectedBreed(breed);
+    try {
+      let imageUrl;
+      //Condicional pra verificar se a raça vinda da DogCEO tem uma sub-raça pra montar o URL da requisição
+      if (breed.subBreed) {
+        imageUrl = await getSubBreedImage(breed.value, breed.subBreed);
+      } else {
+        imageUrl = await getBreedImage(breed.value);
+      }
+      setDogImage(imageUrl);
+    } catch (error) {
+      console.error('Error fetching dog image:', error);
+    }
   };
 
   return (
@@ -34,8 +46,15 @@ export default function HomeScreen() {
         />
       }>
 
-      {/* Componente de Menu dropdown com autocomplete das raças */}
-      <DogBreedDropdown options={dogBreeds} onSelect={handleSelectBreed} />
+      {/* Componente de Menu dropdown com autocomplete das raças
+       e texto de aviso pra caso as raças ainda estejam carregando.*/}
+      {dogBreedsloading ? (
+        <ThemedText>Carregando raças...</ThemedText>
+      ) : error ? (
+        <ThemedText>Erro ao carregar raças: {error}</ThemedText>
+      ) : (
+        <DogBreedDropdown options={dogBreeds} onSelect={handleSelectBreed} />
+      )}
 
       {/* Exibição da raça selecionada pra teste */}
       {selectedBreed && (
@@ -46,10 +65,12 @@ export default function HomeScreen() {
       )}
 
       {/* Exibição da imagem do cachorro */}
-      <DogImageView
-        title={selectedBreed ? selectedBreed.value : null}
-        imageUrl={'https://pbs.twimg.com/media/GjTBK8AWgAAS-kn?format=jpg&name=240x240'}
-      />
+      {dogImage && (
+        <DogImageView
+          title={selectedBreed ? selectedBreed.label : null}
+          imageUrl={dogImage}
+        />
+      )}
 
     </ParallaxScrollView>
   );
