@@ -1,32 +1,33 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Image, StyleSheet, View, Button } from 'react-native';
-import { HelloWave } from '@/components/HelloWave';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchDogBreeds, fetchDogImage } from '../redux/actions/dogBreedActions'
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { DogBreedDropdown } from '@/components/DogBreedDropdown';
 import { DogImageView } from '@/components/DogImageView';
-import { useFetchDogBreeds } from '@/hooks/useFetchDogBreeds';
-import { useFetchDogImage } from '@/hooks/useFetchDogImage';
-export default function HomeScreen() {
-  const { dogBreeds, loading: dogBreedsloading, error: dogBreedsError, fetchBreeds } = useFetchDogBreeds();
-  const { dogImage, loading: dogImageLoading, error: dogImageError, fetchDogImage } = useFetchDogImage();
-  const [selectedBreed, setSelectedBreed] = useState(null);
 
+export default function HomeScreen() {
+  const dispatch = useDispatch();
+  const { dogBreeds, loading: dogBreedsLoading, error: dogBreedsError } = useSelector((state) => state.dogBreeds);
+  const { dogImage, loading: dogImageLoading, error: dogImageError } = useSelector((state) => state.dogImage);
+
+  const [selectedBreed, setSelectedBreed] = useState(null);
   // UseEffect com array de dependencias vazio pra executar o fetch de raças apenas uma vez quando o componente é montado.
   useEffect(() => {
-    fetchBreeds();
+    dispatch(fetchDogBreeds());
   }, []);
 
-  //Handler pra seleção de raças e fetch de imagens a partir do Axios
+  //Handler pra seleção de raças no dropdown preenchido a partir do dispatch acima
   const handleSelectBreed = (breed) => {
     setSelectedBreed(breed);
   };
 
-  //Handler pra usar o hook de fetch de imagens de cachorro.
+  //Handler pra usar o hook de fetch de imagens de cachorro chamando o dispatch do Redux.
   const handleFetchDogImage = () => {
     if (selectedBreed) {
-      fetchDogImage(selectedBreed.value, selectedBreed.subBreed);
+      dispatch(fetchDogImage(selectedBreed));
     }
   };
 
@@ -42,34 +43,36 @@ export default function HomeScreen() {
 
       {/* Componente de Menu dropdown com autocomplete das raças
        e texto de aviso pra caso as raças ainda estejam carregando.*/}
-      {dogBreedsloading ? (
+      {dogBreedsLoading ? (
         <ThemedText>Carregando raças...</ThemedText>
-      ) : dogBreedsError ? (
-        <ThemedText>Erro ao carregar raças: {dogBreedsError}</ThemedText>
+      ) : dogBreedsLoading ? (
+        <ThemedText>Erro ao carregar raças: {error}</ThemedText>
       ) : (
         <DogBreedDropdown options={dogBreeds} onSelect={handleSelectBreed} />
       )}
 
       {/* Botão pra disparar o handler de fetch */}
       <View style={styles.buttonContainer}>
-        <Button 
-          title={dogImageLoading ? "Carregando imagem..." : "Mostrar Imagem"} 
-          onPress={handleFetchDogImage} 
+        <Button
+          title={dogImageLoading ? 'Carregando imagem...' : 'Mostrar Imagem'}
+          onPress={handleFetchDogImage}
           disabled={dogImageLoading || !selectedBreed}
         />
       </View>
 
       {/* Exibição da imagem do cachorro 
       e mensagem de carregamento/erro*/}
-      {dogImageLoading && <ThemedText>Carregando imagem...</ThemedText>}
-      {dogImageError && <ThemedText>Erro ao carregar imagem: {dogImageError}</ThemedText>}
-      {dogImage && (
+      {/*@TODO: Adicionar um spinner/throbber de loading aqui com o texto carregando imagem*/}
+
+      {dogImageLoading && <ThemedText style={{ alignSelf: 'center' }}>Carregando imagem...</ThemedText>}
+      {dogImageError && <ThemedText style={{ alignSelf: 'center' }}>Erro ao carregar imagem: {dogImageError}</ThemedText>}
+      {(dogImage && !dogImageLoading) && (
         <DogImageView
           title={selectedBreed ? selectedBreed.label : null}
           imageUrl={dogImage}
         />
       )}
-      
+
     </ParallaxScrollView>
   );
 }
