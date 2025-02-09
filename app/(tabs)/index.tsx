@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Image, StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, View, Button } from 'react-native';
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
@@ -7,12 +7,11 @@ import { ThemedView } from '@/components/ThemedView';
 import { DogBreedDropdown } from '@/components/DogBreedDropdown';
 import { DogImageView } from '@/components/DogImageView';
 import { useFetchDogBreeds } from '@/hooks/useFetchDogBreeds';
-import { getBreedImage, getSubBreedImage } from '@/services/axiosClient';
-
+import { useFetchDogImage } from '@/hooks/useFetchDogImage';
 export default function HomeScreen() {
-  const { dogBreeds, loading: dogBreedsloading, error, fetchBreeds } = useFetchDogBreeds();
+  const { dogBreeds, loading: dogBreedsloading, error: dogBreedsError, fetchBreeds } = useFetchDogBreeds();
+  const { dogImage, loading: dogImageLoading, error: dogImageError, fetchDogImage } = useFetchDogImage();
   const [selectedBreed, setSelectedBreed] = useState(null);
-  const [dogImage, setDogImage] = useState(null);
 
   // UseEffect com array de dependencias vazio pra executar o fetch de raças apenas uma vez quando o componente é montado.
   useEffect(() => {
@@ -20,19 +19,14 @@ export default function HomeScreen() {
   }, []);
 
   //Handler pra seleção de raças e fetch de imagens a partir do Axios
-  const handleSelectBreed = async (breed) => {
+  const handleSelectBreed = (breed) => {
     setSelectedBreed(breed);
-    try {
-      let imageUrl;
-      //Condicional pra verificar se a raça vinda da DogCEO tem uma sub-raça pra montar o URL da requisição
-      if (breed.subBreed) {
-        imageUrl = await getSubBreedImage(breed.value, breed.subBreed);
-      } else {
-        imageUrl = await getBreedImage(breed.value);
-      }
-      setDogImage(imageUrl);
-    } catch (error) {
-      console.error('Error fetching dog image:', error);
+  };
+
+  //Handler pra usar o hook de fetch de imagens de cachorro.
+  const handleFetchDogImage = () => {
+    if (selectedBreed) {
+      fetchDogImage(selectedBreed.value, selectedBreed.subBreed);
     }
   };
 
@@ -50,28 +44,32 @@ export default function HomeScreen() {
        e texto de aviso pra caso as raças ainda estejam carregando.*/}
       {dogBreedsloading ? (
         <ThemedText>Carregando raças...</ThemedText>
-      ) : error ? (
-        <ThemedText>Erro ao carregar raças: {error}</ThemedText>
+      ) : dogBreedsError ? (
+        <ThemedText>Erro ao carregar raças: {dogBreedsError}</ThemedText>
       ) : (
         <DogBreedDropdown options={dogBreeds} onSelect={handleSelectBreed} />
       )}
 
-      {/* Exibição da raça selecionada pra teste */}
-      {selectedBreed && (
-        <ThemedView style={styles.selectedBreedContainer}>
-          <ThemedText type="subtitle">Raça selecionada:</ThemedText>
-          <ThemedText>{selectedBreed.label}</ThemedText>
-        </ThemedView>
-      )}
+      {/* Botão pra disparar o handler de fetch */}
+      <View style={styles.buttonContainer}>
+        <Button 
+          title={dogImageLoading ? "Carregando imagem..." : "Mostrar Imagem"} 
+          onPress={handleFetchDogImage} 
+          disabled={dogImageLoading || !selectedBreed}
+        />
+      </View>
 
-      {/* Exibição da imagem do cachorro */}
+      {/* Exibição da imagem do cachorro 
+      e mensagem de carregamento/erro*/}
+      {dogImageLoading && <ThemedText>Carregando imagem...</ThemedText>}
+      {dogImageError && <ThemedText>Erro ao carregar imagem: {dogImageError}</ThemedText>}
       {dogImage && (
         <DogImageView
           title={selectedBreed ? selectedBreed.label : null}
           imageUrl={dogImage}
         />
       )}
-
+      
     </ParallaxScrollView>
   );
 }
@@ -85,6 +83,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
   selectedBreedContainer: {
+    marginVertical: 20,
+    paddingHorizontal: 16,
+  },
+  buttonContainer: {
     marginVertical: 20,
     paddingHorizontal: 16,
   },
