@@ -1,50 +1,30 @@
-# Welcome to your Expo app 👋
+### DogCEO - Gerador de cachorros aleatórios
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Esse projeto é uma pequena aplicação que gera imagens aleatórias a partir da DogCEO API.
 
-## Get started
+O projeto inclui um simples drop-down menu que conta com autocomplete exibindo todas as raças recebidas da lista de raças da DogCEO API. As raças com subtipos possuem o uso de parênteses, como Bulldog (french), por exemplo. Selecionar uma raça permite o usuário clicar no botão e receber uma imagem aleatória de um cachorro daquela raça. 
 
-1. Install dependencies
+## Como executar o projeto
+Navegue para a pasta da aplicação.
 
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-    npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+Instale a Expo CLI.
+```
+npm install -g expo-cli
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Instale as dependências do projeto.
+```
+npm install
+```
 
-## Learn more
+Rode o projeto no navegador ou em um emulador de android.
+```
+npm run web
 
-To learn more about developing your project with Expo, look at the following resources:
+ou
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+npm run android
+```
 
-## Join the community
 
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Caso rode na web, a aplicação então ficará disponível na porta localhost:8081.
