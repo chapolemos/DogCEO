@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Image, StyleSheet, Platform, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { DogBreedDropdown } from '@/components/DogBreedDropdown';
+import { DogImageView } from '@/components/DogImageView';
 
 export default function HomeScreen() {
   const [selectedBreed, setSelectedBreed] = useState(null);
@@ -44,17 +45,17 @@ export default function HomeScreen() {
         </ThemedView>
       )}
 
+      {/* Exibição da imagem do cachorro */}
+      <DogImageView
+        title={selectedBreed ? selectedBreed.value : null}
+        imageUrl={'https://pbs.twimg.com/media/GjTBK8AWgAAS-kn?format=jpg&name=240x240'}
+      />
 
     </ParallaxScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
   reactLogo: {
     height: 178,
     width: 290,
