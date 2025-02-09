@@ -56,14 +56,20 @@ export const DogBreedDropdown = ({ options, onSelect }) => {
       {dropdownOpen && (
         <View style={styles.listStyle}>
           <ScrollView style={styles.scrollView}>
-            {filteredOptions.map(item => (
-              <TouchableOpacity
-                key={item.value}
-                onPress={() => handleSelectOption(item)}
-                style={styles.itemContainer}>
-                <ThemedText style={styles.itemText}>{item.label}</ThemedText>
-              </TouchableOpacity>
-            ))}
+            {filteredOptions.length > 0 ? (
+              filteredOptions.map(item => (
+                <TouchableOpacity
+                  key={item.label}
+                  onPress={() => handleSelectOption(item)}
+                  style={styles.itemContainer}>
+                  <ThemedText style={styles.itemText}>{item.label}</ThemedText>
+                </TouchableOpacity>
+              ))
+            ) : (
+              <ThemedView style={styles.itemContainer}>              
+                <ThemedText style={styles.itemText}>Nenhum resultado encontrado.</ThemedText>
+              </ThemedView>
+            )}
           </ScrollView>
         </View>
       )}
@@ -104,6 +110,7 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   itemContainer: {
+    backgroundColor: 'white',
     padding: 10,
   },
 });
