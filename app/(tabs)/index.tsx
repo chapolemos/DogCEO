@@ -1,11 +1,28 @@
-import { Image, StyleSheet, Platform } from 'react-native';
-
+import React, { useState } from 'react';
+import { Image, StyleSheet, Platform, View } from 'react-native';
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { DogBreedDropdown } from '@/components/DogBreedDropdown';
 
 export default function HomeScreen() {
+  const [selectedBreed, setSelectedBreed] = useState(null);
+
+  {/* Objeto de raças temporario pra testar a UI */ }
+
+  const dogBreeds = [
+    { label: 'Bulldog', value: 'bulldog' },
+    { label: 'Poodle', value: 'poodle' },
+    { label: 'Labrador', value: 'labrador' },
+    { label: 'Beagle', value: 'beagle' },
+    { label: 'German Shepherd', value: 'german_shepherd' },
+  ];
+
+  const handleSelectBreed = (breed) => {
+    setSelectedBreed(breed);
+  };
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
@@ -15,41 +32,19 @@ export default function HomeScreen() {
           style={styles.reactLogo}
         />
       }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
+
+      {/* Componente de Menu dropdown com autocomplete das raças */}
+      <DogBreedDropdown options={dogBreeds} onSelect={handleSelectBreed} />
+
+      {/* Exibição da raça selecionada pra teste */}
+      {selectedBreed && (
+        <ThemedView style={styles.selectedBreedContainer}>
+          <ThemedText type="subtitle">Raça selecionada:</ThemedText>
+          <ThemedText>{selectedBreed.label}</ThemedText>
+        </ThemedView>
+      )}
+
+
     </ParallaxScrollView>
   );
 }
@@ -60,15 +55,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
   reactLogo: {
     height: 178,
     width: 290,
     bottom: 0,
     left: 0,
     position: 'absolute',
+  },
+  selectedBreedContainer: {
+    marginVertical: 20,
+    paddingHorizontal: 16,
   },
 });
