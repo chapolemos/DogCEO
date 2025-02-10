@@ -53,7 +53,7 @@ export const DogBreedDropdown = ({ options, onSelect }) => {
     Keyboard.dismiss();
   };
 
-  // Usage of filter for available options based on the text input query.
+  // Uso de filter pras opções disponiveis baseado na query do text input.
   const filteredOptions = options.filter(option =>
     option.label.toLowerCase().includes(query.toLowerCase())
   );
