@@ -1,5 +1,5 @@
 import React, { useState, useRef, useLayoutEffect } from 'react';
-import { View, TouchableOpacity, TextInput, ScrollView, StyleSheet, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { View, TouchableOpacity, TextInput, ScrollView, StyleSheet, TouchableWithoutFeedback, Keyboard, Platform } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 
@@ -9,14 +9,21 @@ export const DogBreedDropdown = ({ options, onSelect }) => {
   const dropdownRef = useRef(null);
   const inputRef = useRef(null);
 
-  //Adição de um event listener pra fechar o dropdown se for clicado fora 
+  //(Web) Adição de um event listener pra fechar o dropdown se for clicado fora 
   useLayoutEffect(() => {
-    document.addEventListener('mousedown', handleOutsidePress);
-    return () => {
-      document.removeEventListener('mousedown', handleOutsidePress);
-    };
-  }, []);
+    if (Platform.OS === 'web') {
+      const handleOutsidePressWeb = (e) => {
+        if (dropdownRef.current && !dropdownRef.current.contains(e.target) && !inputRef.current.contains(e.target)) {
+          setDropdownOpen(false);
+        }
+      };
 
+      document.addEventListener('mousedown', handleOutsidePressWeb);
+      return () => {
+        document.removeEventListener('mousedown', handleOutsidePressWeb);
+      };
+    }
+  }, []);
   // Handler de abertura/fechamento do dropdown
   const handleDropdownToggle = () => {
     if (!dropdownOpen) {
@@ -40,11 +47,10 @@ export const DogBreedDropdown = ({ options, onSelect }) => {
     if (onSelect) onSelect(item);
   };
 
-  // Handler pra fechar o menu quando for clicado fora da lista
-  const handleOutsidePress = (e) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(e.target) && !inputRef.current.contains(e.target)) {
-      setDropdownOpen(false);
-    }
+  //(Mobile) Handler pra fechar o menu quando for clicado fora da lista
+  const handleOutsidePress = () => {
+    setDropdownOpen(false);
+    Keyboard.dismiss();
   };
 
   // Uso de filter pras opções disponiveis baseado na query do text input.
