@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Image, StyleSheet, View, Button } from 'react-native';
+import { Image, StyleSheet, View, Button, ActivityIndicator } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchDogBreeds, fetchDogImage } from '../redux/actions/dogBreedActions'
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -36,7 +36,7 @@ export default function HomeScreen() {
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
       headerImage={
         <Image
-          source={require('@/assets/images/partial-react-logo.png')}
+          source={require('@/assets/images/dog.png')}
           style={styles.reactLogo}
         />
       }>
@@ -45,8 +45,8 @@ export default function HomeScreen() {
        e texto de aviso pra caso as raças ainda estejam carregando.*/}
       {dogBreedsLoading ? (
         <ThemedText>Carregando raças...</ThemedText>
-      ) : dogBreedsLoading ? (
-        <ThemedText>Erro ao carregar raças: {error}</ThemedText>
+      ) : dogBreedsError ? (
+        <ThemedText>Erro ao carregar raças: {dogBreedsError}</ThemedText>
       ) : (
         <DogBreedDropdown options={dogBreeds} onSelect={handleSelectBreed} />
       )}
@@ -61,12 +61,19 @@ export default function HomeScreen() {
       </View>
 
       {/* Exibição da imagem do cachorro 
-      e mensagem de carregamento/erro*/}
-      {/*@TODO: Adicionar um spinner/throbber de loading aqui com o texto carregando imagem*/}
+      e mensagem de carregamento com um spinner/exibição de mensagens de erro*/}
+      {dogImageLoading && (
+        <View style={styles.spinnerContainer}>
+          <ActivityIndicator size="large" color="#0000ff" />
+          <ThemedText>Carregando imagem...</ThemedText>
+        </View>
+      )}
 
-      {dogImageLoading && <ThemedText style={{ alignSelf: 'center' }}>Carregando imagem...</ThemedText>}
-      {dogImageError && <ThemedText style={{ alignSelf: 'center' }}>Erro ao carregar imagem: {dogImageError}</ThemedText>}
-      {(dogImage && !dogImageLoading) && (
+      {dogImageError && (
+        <ThemedText style={{ alignSelf: 'center' }}>Erro ao carregar imagem: {dogImageError}</ThemedText>
+      )}
+
+      {dogImage && !dogImageLoading && (
         <DogImageView
           title={selectedBreed ? selectedBreed.label : null}
           imageUrl={dogImage}
@@ -92,5 +99,11 @@ const styles = StyleSheet.create({
   buttonContainer: {
     marginVertical: 20,
     paddingHorizontal: 16,
+  },
+  spinnerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 20,
   },
 });
