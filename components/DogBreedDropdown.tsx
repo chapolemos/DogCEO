@@ -3,7 +3,6 @@ import { View, TouchableOpacity, TextInput, ScrollView, StyleSheet } from 'react
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 
-
 export const DogBreedDropdown = ({ options, onSelect }) => {
   const [query, setQuery] = useState('');
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -81,6 +80,7 @@ const styles = StyleSheet.create({
   autocompleteContainer: {
     marginBottom: 20,
     paddingHorizontal: 16,
+    position: 'relative',
   },
   inputContainer: {
     borderColor: '#ccc',
@@ -96,12 +96,16 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
   },
   listStyle: {
-    maxHeight: 200,
+    position: 'absolute',
+    top: 70, 
+    left: 18,
+    right: 18,
     backgroundColor: 'white',
     borderWidth: 1,
     borderRadius: 8,
     borderColor: '#ccc',
-    marginTop: 5,
+    zIndex:0,
+    maxHeight: 200,
   },
   scrollView: {
     maxHeight: 200,
