@@ -17,17 +17,20 @@ Instale as dependências do projeto.
 npm install
 ```
 
-Rode o projeto no navegador ou em um emulador de android.
+Rode a aplicação em um emulador de android ou dispositivo conectado via USB.
 ```
-npm run web
-
-ou
-
 npm run android
 ```
 
+Opcionalmente, rode a aplicação no seu navegador web. 
+```
+npm run web
+```
+A aplicação então ficará disponível na porta localhost:8081. 
+É recomendado usar a barra de ferramenta de dispositivos do seu respectivo do seu navegador pra testar a aplicação (Ctrl + Shift + M no Firefox, ou Ctrl + Shift + I seguido de Ctrl + Shift + M no Google chrome.)
 
-Caso rode na web, a aplicação então ficará disponível na porta localhost:8081.
+
+Caso rode na web, 
 
 
 # Tecnologias Utilizadas
