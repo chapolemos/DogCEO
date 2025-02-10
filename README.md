@@ -37,8 +37,11 @@ Caso rode na web,
 
 <p align="center">
   <img src="https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg" alt="React" width="120" height="120" style="margin: 10px;">
-  <img src="https://www.svgrepo.com/show/341805/expo.svg" alt="expo" width="120" height="120" style="margin: 10px;">
-  <img src="https://www.vectorlogo.zone/logos/tailwindcss/tailwindcss-icon.svg" alt="Tailwind CSS" width="120" height="120" style="margin: 10px;">
+  <img src="https://www.svgrepo.com/show/341805/expo.svg" alt="Expo" width="120" height="120" style="margin: 10px;">
+  <img src="https://user-images.githubusercontent.com/43313420/105893220-1bae8780-6013-11eb-87be-eeac845ecc6f.png" alt="Redux" width="120" height="120" style="margin: 10px;">
+  <img src="https://cdn.worldvectorlogo.com/logos/redux.svg" alt="Redux" width="120" height="120" style="margin: 10px;">
+  <img src="https://cdn.worldvectorlogo.com/logos/redux-saga.svg" alt="Redux saga" width="120" height="120" style="margin: 10px;">
+
 </p>
 
 ## React Native
