@@ -14,17 +14,14 @@ export default function HomeScreen() {
   const { dogImage, loading: dogImageLoading, error: dogImageError } = useSelector((state) => state.dogImage);
 
   const [selectedBreed, setSelectedBreed] = useState(null);
-  // UseEffect com array de dependencias vazio pra executar o fetch de raças apenas uma vez quando o componente é montado.
   useEffect(() => {
     dispatch(fetchDogBreeds());
   }, []);
 
-  //Handler pra seleção de raças no dropdown preenchido a partir do dispatch acima
   const handleSelectBreed = (breed) => {
     setSelectedBreed(breed);
   };
 
-  //Handler pra usar o hook de fetch de imagens de cachorro chamando o dispatch do Redux.
   const handleFetchDogImage = () => {
     if (selectedBreed) {
       dispatch(fetchDogImage(selectedBreed));
@@ -79,7 +76,6 @@ export default function HomeScreen() {
           imageUrl={dogImage}
         />
       )}
-
     </ParallaxScrollView>
   );
 }
@@ -99,6 +95,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     marginVertical: 20,
     paddingHorizontal: 16,
+    zIndex: -1,
   },
   spinnerContainer: {
     flexDirection: 'row',

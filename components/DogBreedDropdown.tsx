@@ -1,12 +1,21 @@
-import React, { useState } from 'react';
-import { View, TouchableOpacity, TextInput, ScrollView, StyleSheet } from 'react-native';
+import React, { useState, useRef, useLayoutEffect } from 'react';
+import { View, TouchableOpacity, TextInput, ScrollView, StyleSheet, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-
 
 export const DogBreedDropdown = ({ options, onSelect }) => {
   const [query, setQuery] = useState('');
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+  const inputRef = useRef(null);
+
+  //Adição de um event listener pra fechar o dropdown se for clicado fora 
+  useLayoutEffect(() => {
+    document.addEventListener('mousedown', handleOutsidePress);
+    return () => {
+      document.removeEventListener('mousedown', handleOutsidePress);
+    };
+  }, []);
 
   // Handler de abertura/fechamento do dropdown
   const handleDropdownToggle = () => {
@@ -20,7 +29,7 @@ export const DogBreedDropdown = ({ options, onSelect }) => {
   const handleInputChange = (text) => {
     setQuery(text);
     if (!dropdownOpen) {
-      setDropdownOpen(true)
+      setDropdownOpen(true);
     }
   };
 
@@ -31,49 +40,59 @@ export const DogBreedDropdown = ({ options, onSelect }) => {
     if (onSelect) onSelect(item);
   };
 
+  // Handler pra fechar o menu quando for clicado fora da lista
+  const handleOutsidePress = (e) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(e.target) && !inputRef.current.contains(e.target)) {
+      setDropdownOpen(false);
+    }
+  };
+
   // Uso de filter pras opções disponiveis baseado na query do text input.
   const filteredOptions = options.filter(option =>
     option.label.toLowerCase().includes(query.toLowerCase())
   );
 
   return (
-    <ThemedView style={styles.autocompleteContainer}>
-      <ThemedText type="subtitle">Selecione a Raça:</ThemedText>
+    // Usando um TouchableWithoutFeedback pra triggar o handler pra fechar o menu ao clicar fora.
+    <TouchableWithoutFeedback onPress={handleOutsidePress}>
+      <ThemedView style={styles.autocompleteContainer}>
+        <ThemedText type="subtitle">Selecione a Raça:</ThemedText>
 
-      {/* Campo de texto pra query */}
-      <TouchableOpacity onPress={handleDropdownToggle}>
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.textInput}
-            value={query}
-            onChangeText={handleInputChange}
-            placeholder="Selecione a raça"
-          />
-        </View>
-      </TouchableOpacity>
+        {/* Campo de texto pra query */}
+        <TouchableOpacity onPress={handleDropdownToggle} ref={inputRef}>
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.textInput}
+              value={query}
+              onChangeText={handleInputChange}
+              placeholder="Selecione a raça"
+            />
+          </View>
+        </TouchableOpacity>
 
-      {/* Dropdown com as raças de cachorro */}
-      {dropdownOpen && (
-        <View style={styles.listStyle}>
-          <ScrollView style={styles.scrollView}>
-            {filteredOptions.length > 0 ? (
-              filteredOptions.map(item => (
-                <TouchableOpacity
-                  key={item.label}
-                  onPress={() => handleSelectOption(item)}
-                  style={styles.itemContainer}>
-                  <ThemedText style={styles.itemText}>{item.label}</ThemedText>
-                </TouchableOpacity>
-              ))
-            ) : (
-              <ThemedView style={styles.itemContainer}>              
-                <ThemedText style={styles.itemText}>Nenhum resultado encontrado.</ThemedText>
-              </ThemedView>
-            )}
-          </ScrollView>
-        </View>
-      )}
-    </ThemedView>
+        {/* Dropdown com as raças de cachorro */}
+        {dropdownOpen && (
+          <View ref={dropdownRef} style={styles.listStyle}>
+            <ScrollView style={styles.scrollView}>
+              {filteredOptions.length > 0 ? (
+                filteredOptions.map(item => (
+                  <TouchableOpacity
+                    key={item.label}
+                    onPress={() => handleSelectOption(item)}
+                    style={styles.itemContainer}>
+                    <ThemedText style={styles.itemText}>{item.label}</ThemedText>
+                  </TouchableOpacity>
+                ))
+              ) : (
+                <ThemedView style={styles.itemContainer}>
+                  <ThemedText style={styles.itemText}>Nenhum resultado encontrado.</ThemedText>
+                </ThemedView>
+              )}
+            </ScrollView>
+          </View>
+        )}
+      </ThemedView>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -81,6 +100,7 @@ const styles = StyleSheet.create({
   autocompleteContainer: {
     marginBottom: 20,
     paddingHorizontal: 16,
+    position: 'relative',
   },
   inputContainer: {
     borderColor: '#ccc',
@@ -96,12 +116,16 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
   },
   listStyle: {
-    maxHeight: 200,
+    position: 'absolute',
+    top: 70, 
+    left: 18,
+    right: 18,
     backgroundColor: 'white',
     borderWidth: 1,
     borderRadius: 8,
     borderColor: '#ccc',
-    marginTop: 5,
+    zIndex:0,
+    maxHeight: 200,
   },
   scrollView: {
     maxHeight: 200,
